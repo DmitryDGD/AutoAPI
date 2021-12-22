@@ -10,7 +10,7 @@ import java.util.Random;
 import static io.restassured.RestAssured.given;
 import static org.testng.Assert.assertEquals;
 
-public class CreatePet {
+public class POSTCreatePet {
 
     @Test
     public void PostCreatePet() {
