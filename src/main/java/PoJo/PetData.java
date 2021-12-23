@@ -1,5 +1,4 @@
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+package PoJo;
 
 import java.util.List;
 
@@ -7,7 +6,7 @@ public class PetData {
 
     // создаём класс под JSON
     private Integer id;
-   // private PetCategory category;
+    private PetCategory category;
     private String name;
     private List<String> photoUrls;
     private STATUS_TYPE status;
@@ -16,7 +15,9 @@ public class PetData {
         available, pending, sold
     }
 
-
+    public void setCategory(int id, String name) {
+        category = new PetCategory(id, name);
+    }
 
 
 
@@ -53,7 +54,6 @@ public class PetData {
     public void setStatus_type(STATUS_TYPE status) {
         this.status = status;
     }
-
 
 
 }
