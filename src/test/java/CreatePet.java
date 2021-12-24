@@ -59,8 +59,14 @@ public class CreatePet {
 
         System.out.println("ResponseCreateOrderPOST: \n" + responsePost.asString());
 
+
         // делаем проверки
         assertEquals(responsePost.statusCode(), 200);
+        assertEquals(responsePost.jsonPath().getString("id"), petData.getId().toString());
+
+
+
+
 
 
 

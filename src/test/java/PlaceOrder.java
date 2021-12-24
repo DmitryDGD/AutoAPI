@@ -1,7 +1,6 @@
 import PoJo.OrderData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.sun.xml.bind.v2.runtime.reflect.opt.Const;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.testng.annotations.Test;
@@ -14,6 +13,9 @@ import static org.testng.Assert.assertEquals;
 public class PlaceOrder {
 
    final String baseUri = "https://petstore.swagger.io";
+
+
+
 
    // генерируем id в диапазоне от 1 до 1000
    Random random = new Random();
@@ -32,6 +34,7 @@ public class PlaceOrder {
       OrderData orderData = new OrderData();
       orderData.setId(randomId);
       orderData.setPetId(1);
+
       orderData.setQuantity(1);
       orderData.setShipDate(currentDate);
       orderData.setStatus_type(OrderData.STATUS_TYPE.placed);
@@ -57,7 +60,8 @@ public class PlaceOrder {
 
       // делаем проверки
       assertEquals(responsePost.statusCode(), 200);
-    //  assertEquals(responsePost.jsonPath().getInt("Id"), randomId);
+      assertEquals(responsePost.jsonPath().getString("id"), orderData.getId().toString());
+
 
 
 
