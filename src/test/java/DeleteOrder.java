@@ -5,12 +5,12 @@ import org.testng.annotations.Test;
 import static io.restassured.RestAssured.given;
 import static org.testng.Assert.assertEquals;
 
-public class deleteOrder {
+public class DeleteOrder {
 
     final String baseUri = "https://petstore.swagger.io";
 
     @Test
-    public void DeleteOrder() {
+    public void deleteOrder() {
 
         // делаем GET запрос на удаление ордера
         Response responseGet = given()
