@@ -7,24 +7,54 @@ import static org.testng.Assert.assertEquals;
 
 public class DeleteOrder {
 
-    final String baseUri = "https://petstore.swagger.io";
+    PlaceOrder placeOrder = new PlaceOrder();
+    Integer orderId = placeOrder.getOrderId();
 
-    @Test
+    final String baseUri = "https://petstore.swagger.io";
+    final String getURL = "/v2/pet/" + orderId;
+
+    @Test(priority = 1)
     public void deleteOrder() {
 
-        // делаем GET запрос на удаление ордера
-        Response responseGet = given()
+        // делаем запрос на удаление ордера
+        Response responseDeleteOrder = given()
                 .baseUri(baseUri)
                 .contentType(ContentType.JSON)
                 .when()
-                .delete("v2/store/order/1")
+                .delete(getURL)
                 .then()
                 .extract().response();
 
         // проверка кода ответа
-        assertEquals(responseGet.statusCode(), 200);
+        assertEquals(responseDeleteOrder.statusCode(), 200);
+        System.out.println("BaseURI = " + baseUri);
+        System.out.println("getURL = " + getURL);
 
-        System.out.println(responseGet.asString());
+
+        System.out.println(responseDeleteOrder.asString());
+
+    }
+
+
+
+    //проверяем что ордер удален с помощью Get запроса
+    @Test(priority = 2)
+    public void GetOrder() {
+
+
+
+        Response responseGetOrder = given()
+                .baseUri(baseUri)
+                .contentType(ContentType.JSON)
+                .when()
+                .get("getURL")
+                .then()
+                .extract().response();
+
+
+        assertEquals(responseGetOrder.statusCode(), 404);
+
+        System.out.println("ResponseGetPet: \n" + responseGetOrder.asString());
 
     }
 

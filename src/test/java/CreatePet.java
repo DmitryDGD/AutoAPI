@@ -14,40 +14,38 @@ import static org.testng.Assert.assertEquals;
 
 public class CreatePet {
 
+
+
     final String baseUri = "https://petstore.swagger.io";
 
-    // генерируем id в диапазоне от 1 до 1000
+    // генерируем id пета в диапазоне от 1 до 1000
     Random random = new Random();
-    int randomId = random.nextInt(1000 + 1);
+    int randomPetId = random.nextInt(1000 + 1);
+
+    // создаём объект класса POJO.PetData для сериализации в json
+    PetData petData = new PetData();
 
 
-
-    @Test
+    @Test(priority = 1)
     public void PostCreatePet() {
-        // генерируем id в диапазоне от 1 до 1000
-        Random random = new Random();
-        int randomId = random.nextInt(1000 + 1);
 
-        PetData petData = new PetData();
-
-        // создаём объект класса POJO.PetData для сериализации в json и заполняем поля
-
-
+        // заполняем класс PetData
         List<String> photoUrls = new ArrayList<>();
         photoUrls.add("url1");
         photoUrls.add("url2");
-        petData.setId(randomId);
+
+        petData.setId(randomPetId);
         petData.setCategory(1, "TestPet8");
         petData.setName("doggie");
         petData.setPhotoUrls(photoUrls);
         petData.setStatus_type(PetData.STATUS_TYPE.available);
 
-        // создаем объект класса Gson и конвертируем наш POJO.OrderData в Json
+        // создаем объект класса Gson и конвертируем наш POJO.PetData в Json
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String jsonString = gson.toJson(petData);
         System.out.println("RequestCreatePetPOST: \n" + jsonString);
 
-        // делаем POST запрос на создание ордера
+        // делаем POST запрос на создание пета
         Response responsePost = given()
                 .baseUri(baseUri)
                 .contentType(ContentType.JSON)
@@ -63,17 +61,31 @@ public class CreatePet {
         // делаем проверки
         assertEquals(responsePost.statusCode(), 200);
         assertEquals(responsePost.jsonPath().getString("id"), petData.getId().toString());
+    }
 
 
+    //проверяем созданного пета с помощью Get запроса
+    @Test(priority = 2)
+    public void GetPet() {
 
+        final String getURL = "/v2/pet/" + randomPetId;
 
+        Response responseGetPet = given()
+                .baseUri(baseUri)
+                .contentType(ContentType.JSON)
+                .when()
+                .get(getURL)
+                .then()
+                .extract().response();
 
-
-
-
-
+        assertEquals(responseGetPet.statusCode(), 200);
+        assertEquals(responseGetPet.jsonPath().getString("id"), petData.getId().toString());
+        System.out.println("ResponseGetPet: \n" + responseGetPet.asString());
 
     }
 
+    public Integer getPetId() {
+        return randomPetId;
+    }
 
 }

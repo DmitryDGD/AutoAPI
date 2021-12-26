@@ -14,27 +14,29 @@ public class PlaceOrder {
 
    final String baseUri = "https://petstore.swagger.io";
 
+   // получаем ID созданного пета из CreatePet
+   CreatePet createPet = new CreatePet();
+   Integer petId = createPet.getPetId();
 
-
-
-   // генерируем id в диапазоне от 1 до 1000
+   // генерируем id ордера в диапазоне от 1 до 1000
    Random random = new Random();
-   int randomId = random.nextInt(1000 + 1);
+   int randomOrderId = random.nextInt(1000 + 1);
 
    // сохраняем текущую дату и время в переменную в нужном формате
    Date dateNow = new Date();
    SimpleDateFormat formatForDateNow = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.S");
    String currentDate = formatForDateNow.format(dateNow);
 
+   // создаём объект класса POJO.OrderData для сериализации в json
+   OrderData orderData = new OrderData();
 
-   @Test
+
+   @Test(priority = 1)
    public void PostCreateOrder() {
 
-      // создаём объект класса POJO.OrderData для сериализации в json и заполняем поля
-      OrderData orderData = new OrderData();
-      orderData.setId(randomId);
-      orderData.setPetId(1);
-
+      // заполняем POJO.OrderData
+      orderData.setId(randomOrderId);
+      orderData.setPetId(petId);
       orderData.setQuantity(1);
       orderData.setShipDate(currentDate);
       orderData.setStatus_type(OrderData.STATUS_TYPE.placed);
@@ -61,10 +63,32 @@ public class PlaceOrder {
       // делаем проверки
       assertEquals(responsePost.statusCode(), 200);
       assertEquals(responsePost.jsonPath().getString("id"), orderData.getId().toString());
+//      assertEquals(responsePost.jsonPath().getString("petId"), orderData.getPetId().toString());
+   }
+
+   //проверяем созданный ордер с помощью Get запроса
+   @Test(priority = 2)
+   public void GetOrder() {
+
+      final String getURL = "/v2/store/order/" + randomOrderId;
+
+      Response responseGetOrder = given()
+              .baseUri(baseUri)
+              .contentType(ContentType.JSON)
+              .when()
+              .get(getURL)
+              .then()
+              .extract().response();
 
 
+      assertEquals(responseGetOrder.statusCode(), 200);
 
+      System.out.println("ResponseGetOrder: \n" + responseGetOrder.asString());
 
+   }
+
+   public Integer getOrderId() {
+      return randomOrderId;
    }
 
 
